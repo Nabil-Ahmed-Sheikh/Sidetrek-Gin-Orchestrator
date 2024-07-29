@@ -1,0 +1,37 @@
+ARG GO_VERSION=1.22.2
+
+FROM golang:${GO_VERSION}-alpine AS worker-builder
+
+RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /worker
+WORKDIR /worker
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+RUN go build -o ./app ./worker/main.go
+
+
+FROM alpine:latest
+
+# RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /worker
+WORKDIR /worker
+COPY --from=worker-builder /worker/app .
+
+# RUN mkdir cert && cd cert && touch sidetrek-tcld-ca.crt && touch sidetrek-tcld-ca.key
+
+
+# Install ddependencies for Terraform.
+RUN wget https://releases.hashicorp.com/terraform/1.9.3/terraform_1.9.3_linux_amd64.zip
+RUN unzip terraform_1.9.3_linux_amd64.zip && rm terraform_1.9.3_linux_amd64.zip
+RUN mv terraform /usr/bin/terraform
+
+COPY terraform terraform
+
+EXPOSE 3000
+ENTRYPOINT ["./app"]
