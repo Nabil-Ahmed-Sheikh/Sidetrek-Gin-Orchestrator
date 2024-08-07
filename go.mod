@@ -20,12 +20,14 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.30.3 // indirect
 	github.com/aws/smithy-go v1.20.3 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 )
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.3
 	github.com/aws/aws-sdk-go-v2/config v1.27.27
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.31.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.32.4
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect

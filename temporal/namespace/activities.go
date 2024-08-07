@@ -1,4 +1,4 @@
-package dagster
+package namespace
 
 import (
 	"context"
@@ -12,20 +12,20 @@ import (
 	"GinProject/app/terraform"
 )
 
-func CreateDagsterClusterActivity(ctx context.Context, input CreateDagsterClusterInput) error {
+func CreateNamespaceActivity(ctx context.Context, input CreateNamespaceInput) error {
 	cfg := env.MustGetConfig()
 	awsConfig := awsconfig.LoadConfig(cfg)
 
 	// Temporal activity aware Terraform workspace wrapper
 	tfa := tfactivity.New(tfworkspace.Config{
-		TerraformPath: "dagster",
-		TerraformFS:   terraform.Dagster,
+		TerraformPath: "namespace",
+		TerraformFS:   terraform.Namespace,
 		Backend: tfexec.BackendConfig{
 			Credentials: awsConfig.Credentials,
 			Region:      cfg.TfState.Region,
 			Bucket:      cfg.TfState.Bucket,
 			DynamoDB:    cfg.TfState.DynamoDB,
-			Key:         fmt.Sprintf("dagster-cluster-%s.tfstate", input.ClusterName),
+			Key:         fmt.Sprintf("namespace-%s.tfstate", input.NamespaceName),
 		},
 	})
 
@@ -37,7 +37,7 @@ func CreateDagsterClusterActivity(ctx context.Context, input CreateDagsterCluste
 		},
 		Vars: map[string]interface{}{
 			"cluster_name":   input.ClusterName,
-			"additional_set": input.AdditionalSet,
+			"namespace_name": input.NamespaceName,
 		},
 	})
 	if err != nil {
@@ -47,19 +47,19 @@ func CreateDagsterClusterActivity(ctx context.Context, input CreateDagsterCluste
 	return nil
 }
 
-func DestroyDagsterClusterActivity(ctx context.Context, input DestroyDagsterClusterInput) error {
+func DestroyNamespaceActivity(ctx context.Context, input DestroyNamespaceInput) error {
 	cfg := env.MustGetConfig()
 	awsConfig := awsconfig.LoadConfig(cfg)
 
 	tfa := tfactivity.New(tfworkspace.Config{
-		TerraformPath: "dagster",
-		TerraformFS:   terraform.Dagster,
+		TerraformPath: "namespace",
+		TerraformFS:   terraform.Namespace,
 		Backend: tfexec.BackendConfig{
 			Credentials: awsConfig.Credentials,
 			Region:      cfg.TfState.Region,
 			Bucket:      cfg.TfState.Bucket,
 			DynamoDB:    cfg.TfState.DynamoDB,
-			Key:         fmt.Sprintf("dagster-cluster-%s.tfstate", input.ClusterName),
+			Key:         fmt.Sprintf("namespace-%s.tfstate", input.NamespaceName),
 		},
 	})
 
@@ -67,6 +67,10 @@ func DestroyDagsterClusterActivity(ctx context.Context, input DestroyDagsterClus
 		AwsCredentials: awsConfig.Credentials,
 		Env: map[string]string{
 			"AWS_REGION": cfg.TfState.Region,
+		},
+		Vars: map[string]interface{}{
+			"cluster_name":   input.ClusterName,
+			"namespace_name": input.NamespaceName,
 		},
 	}); err != nil {
 		return err

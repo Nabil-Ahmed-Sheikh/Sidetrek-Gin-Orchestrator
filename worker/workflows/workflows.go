@@ -1,12 +1,16 @@
 package workflows
 
 import (
+	"GinProject/app/temporal/aws/deployment"
 	"GinProject/app/temporal/aws/ec2"
+	"GinProject/app/temporal/aws/ecr"
 	"GinProject/app/temporal/aws/network"
 	"GinProject/app/temporal/dagster"
+	"GinProject/app/temporal/namespace"
 	"encoding/json"
 	"errors"
 
+	// "go.temporal.io/api/namespace/v1"
 	"go.temporal.io/sdk/worker"
 )
 
@@ -24,6 +28,15 @@ func Register(w worker.Worker) {
 	w.RegisterActivity(dagster.CreateDagsterClusterActivity)
 	w.RegisterActivity(dagster.DestroyDagsterClusterActivity)
 
+	w.RegisterActivity(namespace.CreateNamespaceActivity)
+	w.RegisterActivity(namespace.DestroyNamespaceActivity)
+
+	w.RegisterActivity(ecr.ApplyDockerBuildAndPushEcrActivity)
+	w.RegisterActivity(ecr.DestroyDockerBuildAndPushEcrActivity)
+
+	w.RegisterActivity(deployment.CreateDeploymentActivity)
+	w.RegisterActivity(deployment.DestroyDeploymentActivity)
+
 	w.RegisterWorkflow(ec2.DeployEc2Workflow)
 	w.RegisterWorkflow(ec2.DestroyEc2Workflow)
 
@@ -33,6 +46,19 @@ func Register(w worker.Worker) {
 	// dagster
 	w.RegisterWorkflow(dagster.CreateDagsterClusterWorkflow)
 	w.RegisterWorkflow(dagster.DestroyDagsterClusterWorkflow)
+
+	// Namespace
+	w.RegisterWorkflow(namespace.CreateNamespaceWorkflow)
+	w.RegisterWorkflow(namespace.DestroyNamespaceWorkflow)
+
+	// ECR
+
+	w.RegisterWorkflow(ecr.ApplyDockerBuildAndPushEcrWorkflow)
+	w.RegisterWorkflow(ecr.DestroyDockerBuildAndPushEcrWorkflow)
+
+	w.RegisterWorkflow(deployment.CreateDeploymentWorkflow)
+	w.RegisterWorkflow(deployment.DestroyDeploymentWorkflow)
+
 }
 
 func MapInputToWorkflow(wfname string, input string) (interface{}, error) {
@@ -61,6 +87,31 @@ func MapInputToWorkflow(wfname string, input string) (interface{}, error) {
 		in := dagster.DestroyDagsterClusterInput{}
 		err := json.Unmarshal([]byte(input), &in)
 		return in, err
+	case "CreateNamespaceWorkflow":
+		in := namespace.CreateNamespaceInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "DestroyNamespaceWorkflow":
+		in := namespace.DestroyNamespaceInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "ApplyDockerBuildAndPushEcrWorkflow":
+		in := ecr.ApplyDockerBuildAndPushEcrInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "DestroyDockerBuildAndPushEcrWorkflow":
+		in := ecr.DestroyDockerBuildAndPushEcrInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "CreateDeploymentWorkflow":
+		in := deployment.CreateDeploymentInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "DestroyDeploymentWorkflow":
+		in := deployment.DestroymentInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+
 	default:
 		return nil, ErrWorkflowNotFound
 	}

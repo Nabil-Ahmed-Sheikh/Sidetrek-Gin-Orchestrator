@@ -6,10 +6,19 @@ provider "helm" {
   }
 }
 
+resource "kubernetes_namespace" "example" {
+  metadata {
+    name = "dagster"
+  }
+}
+
+
 resource "helm_release" "cluster_dagster" {
   name       = "cluster-dagster"
   repository = "https://dagster-io.github.io/helm"
   chart      = "dagster"
+  namespace  = kubernetes_namespace.example.metadata[0].name
+  create_namespace = false
   
   dynamic "set" {
     for_each = var.additional_set
