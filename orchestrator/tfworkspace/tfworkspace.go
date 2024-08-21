@@ -84,6 +84,7 @@ func (w *Workspace) Apply(ctx context.Context, input ApplyInput) (ApplyOutput, e
 	env["AWS_ACCESS_KEY_ID"] = creds.AccessKeyID
 	env["AWS_SECRET_ACCESS_KEY"] = creds.SecretAccessKey
 	env["AWS_SESSION_TOKEN"] = creds.SessionToken
+	// env["TF_LOG"] = "TRACE"
 
 	// Attempt to import resources that may have not had state pushed on failure
 	for k, v := range input.AttemptImport {

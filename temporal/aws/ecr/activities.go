@@ -76,6 +76,7 @@ func ApplyDockerBuildAndPushEcrActivity(ctx context.Context, input ApplyDockerBu
 			"ecr_password":    pass,
 			"ecr_repo":        input.EcrRepoName,
 			"source_path":     input.SourcePath,
+			"image_tag":       input.EcrImageTag,
 			// we can add other from `input`
 		},
 	})
@@ -104,6 +105,37 @@ func DestroyDockerBuildAndPushEcrActivity(ctx context.Context, input DestroyDock
 	cfg := env.MustGetConfig()
 	awsConfig := awsconfig.LoadConfig(cfg)
 
+	logger := activity.GetLogger(ctx)
+
+	// get ecr token
+	ecrClient := ecr.NewFromConfig(awsConfig)
+	token, err := ecrClient.GetAuthorizationToken(ctx, &ecr.GetAuthorizationTokenInput{})
+	if err != nil {
+		logger.Info("error", err)
+		return err
+	}
+
+	if len(token.AuthorizationData) == 0 || token.AuthorizationData[0].AuthorizationToken == nil {
+		return fmt.Errorf("no authorization data found")
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(*token.AuthorizationData[0].AuthorizationToken)
+	if err != nil {
+		return err
+	}
+
+	authToken := strings.Split(string(decoded), ":")
+	fmt.Println("authToken", authToken)
+
+	if len(authToken) != 2 {
+		// user:pass
+		return fmt.Errorf("invalid authorization token")
+	}
+
+	user := authToken[0]
+	pass := authToken[1]
+
+	// Temporal activity aware Terraform workspace wrapper
 	tfa := tfactivity.New(tfworkspace.Config{
 		TerraformPath: "aws/ecr",
 		TerraformFS:   terraform.AWS,
@@ -120,6 +152,13 @@ func DestroyDockerBuildAndPushEcrActivity(ctx context.Context, input DestroyDock
 		AwsCredentials: awsConfig.Credentials,
 		Env: map[string]string{
 			"AWS_REGION": cfg.TfState.Region,
+		},
+		Vars: map[string]interface{}{
+			// we can add other from `input`
+			"ecr_address":  input.EcrAddress,
+			"ecr_user":     user,
+			"ecr_password": pass,
+			"ecr_repo":     input.EcrRepoName,
 		},
 	}); err != nil {
 		return err

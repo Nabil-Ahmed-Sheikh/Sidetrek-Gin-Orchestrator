@@ -1,0 +1,11 @@
+dagster-code:
+  enabled: true
+  deployments:
+    - name: "dagster_test"
+      image:
+        repository: "${repository}"
+        pullPolicy: Always
+      dagsterApiGrpcArgs:
+        - "--python-module"
+        - "test_project.dagster.test_project.test_project"
+      port: 3030

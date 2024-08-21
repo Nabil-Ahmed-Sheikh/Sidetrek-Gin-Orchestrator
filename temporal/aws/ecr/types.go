@@ -33,5 +33,6 @@ type (
 	DestroyDockerBuildAndPushEcrInput struct {
 		EcrRepoName  string
 		EcrImageName string
+		EcrAddress   string
 	}
 )

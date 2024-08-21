@@ -6,19 +6,26 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace" "example" {
-  metadata {
-    name = "dagster"
-  }
-}
+# resource "kubernetes_namespace" "example" {
+#   metadata {
+#     name = "dagster"
+#   }
+# }
 
 
 resource "helm_release" "cluster_dagster" {
-  name       = "cluster-dagster"
+  name       = "c-dag"
   repository = "https://dagster-io.github.io/helm"
   chart      = "dagster"
-  namespace  = kubernetes_namespace.example.metadata[0].name
+  # namespace  = kubernetes_namespace.example.metadata[0].name
+  namespace  = "dagster"
   create_namespace = false
+  values = [
+    # "${file("./opt/values.yaml")}"
+    templatefile("${path.module}/opt/values-template.yaml", {
+      repository = var.repository
+    })
+  ]
   
   dynamic "set" {
     for_each = var.additional_set

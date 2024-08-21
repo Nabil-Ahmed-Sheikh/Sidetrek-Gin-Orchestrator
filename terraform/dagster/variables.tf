@@ -7,3 +7,7 @@ variable "additional_set" {
   description = "Additional sets to Helm"
   default     = []
 }
+
+variable "repository" {
+    type = string
+}

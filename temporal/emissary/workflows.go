@@ -1,4 +1,4 @@
-package dagster
+package emissary
 
 import (
 	"time"
@@ -7,7 +7,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func CreateDagsterClusterWorkflow(ctx workflow.Context, input CreateDagsterClusterInput) error {
+func CreateEmissaryMappingWorkflow(ctx workflow.Context, input CreateEmissaryMappingInput) error {
 	ctx = workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
 		StartToCloseTimeout: time.Hour,
 		HeartbeatTimeout:    time.Minute,
@@ -19,15 +19,15 @@ func CreateDagsterClusterWorkflow(ctx workflow.Context, input CreateDagsterClust
 		},
 	})
 
-	// Create the Cluster
-	if err := workflow.ExecuteActivity(ctx, CreateDagsterClusterActivity, input).Get(ctx, nil); err != nil {
+	// Create the Namespace
+	if err := workflow.ExecuteActivity(ctx, CreateEmissaryMappingActivity, input).Get(ctx, nil); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func DestroyDagsterClusterWorkflow(ctx workflow.Context, input DestroyDagsterClusterInput) error {
+func DestroyEmissaryMappingWorkflow(ctx workflow.Context, input DestroyEmissaryMappingInput) error {
 	ctx = workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
 		StartToCloseTimeout: time.Hour,
 		HeartbeatTimeout:    time.Minute,
@@ -39,7 +39,7 @@ func DestroyDagsterClusterWorkflow(ctx workflow.Context, input DestroyDagsterClu
 		},
 	})
 
-	if err := workflow.ExecuteActivity(ctx, DestroyDagsterClusterActivity, input).Get(ctx, nil); err != nil {
+	if err := workflow.ExecuteActivity(ctx, DestroyEmissaryMappingActivity, input).Get(ctx, nil); err != nil {
 		return err
 	}
 

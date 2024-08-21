@@ -4,21 +4,9 @@ import (
 	"embed"
 	"os"
 	"path"
-
-	"fmt"
 )
 
 func extractEmbeddedTerraform(efs embed.FS, src string, dst string) error {
-
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
-	fmt.Println("SRC", src)
-	fmt.Println("DST", dst)
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
-	fmt.Println("EFS", efs)
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
-	fmt.Println("XXXXXXXXXXXXXXXXXXXXX")
 
 	entries, err := efs.ReadDir(src)
 	if err != nil {

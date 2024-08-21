@@ -7,6 +7,9 @@ import (
 	"GinProject/app/temporal/aws/network"
 	"GinProject/app/temporal/dagster"
 	"GinProject/app/temporal/namespace"
+
+	"GinProject/app/temporal/emissary"
+
 	"encoding/json"
 	"errors"
 
@@ -59,6 +62,14 @@ func Register(w worker.Worker) {
 	w.RegisterWorkflow(deployment.CreateDeploymentWorkflow)
 	w.RegisterWorkflow(deployment.DestroyDeploymentWorkflow)
 
+	// Emissary
+
+	w.RegisterWorkflow(emissary.CreateEmissaryMappingWorkflow)
+	w.RegisterWorkflow(emissary.DestroyEmissaryMappingWorkflow)
+
+	w.RegisterActivity(emissary.CreateEmissaryMappingActivity)
+	w.RegisterActivity(emissary.DestroyEmissaryMappingActivity)
+
 }
 
 func MapInputToWorkflow(wfname string, input string) (interface{}, error) {
@@ -109,6 +120,14 @@ func MapInputToWorkflow(wfname string, input string) (interface{}, error) {
 		return in, err
 	case "DestroyDeploymentWorkflow":
 		in := deployment.DestroymentInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "CreateEmissaryMappingWorkflow":
+		in := emissary.CreateEmissaryMappingInput{}
+		err := json.Unmarshal([]byte(input), &in)
+		return in, err
+	case "DestroyEmissaryMappingWorkflow":
+		in := emissary.DestroyEmissaryMappingInput{}
 		err := json.Unmarshal([]byte(input), &in)
 		return in, err
 

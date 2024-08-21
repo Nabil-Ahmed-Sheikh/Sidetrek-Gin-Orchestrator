@@ -1,9 +1,6 @@
 resource "kubernetes_namespace" "namespace" {
-
-  count      = 1
+  count = var.namespace_count
   metadata {
-    name        = var.namespace_name
+    name = var.namespace_name
   }
-
 }
-

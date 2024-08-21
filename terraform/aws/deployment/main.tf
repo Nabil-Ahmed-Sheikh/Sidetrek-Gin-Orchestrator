@@ -13,18 +13,7 @@ data "aws_eks_cluster" "cluster" {
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-#   token                  = data.aws_eks_cluster_auth.cluster-auth.token
-#   config_path = "~/.kube/config"
-
-  exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      args        = [
-        "eks", "get-token", 
-        "--cluster-name", "sidetrek-app-cluster", 
-        # "--role-arn", var.iam_admin_role_arn #add role-arn
-      ]
-      command     = "aws"
-  }
+  token                  = data.aws_eks_cluster_auth.cluster-auth.token
 }
 
 
@@ -51,7 +40,7 @@ resource "kubernetes_deployment" "my_app" {
       }
       spec {
         container {
-          image = "447632895027.dkr.ecr.us-west-1.amazonaws.com/dagster-project-ecample"
+          image = "447632895027.dkr.ecr.us-west-1.amazonaws.com/dagster-test-project:20240814121246"
           name  = "my-app"
           port {
             container_port = 3000
@@ -75,6 +64,6 @@ resource "kubernetes_service" "my_app" {
       port        = 3000
       target_port = 3000
     }
-    type = "LoadBalancer"
+    # type = "LoadBalancer"
   }
 }

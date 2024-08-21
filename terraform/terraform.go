@@ -10,3 +10,6 @@ var Dagster embed.FS
 
 //go:embed namespace
 var Namespace embed.FS
+
+//go:embed emissary
+var Emissary embed.FS
