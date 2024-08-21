@@ -37,6 +37,7 @@ func CreateDagsterClusterActivity(ctx context.Context, input CreateDagsterCluste
 		},
 		Vars: map[string]interface{}{
 			"cluster_name":   input.ClusterName,
+			"repository":     input.repository,
 			"additional_set": input.AdditionalSet,
 		},
 	})

@@ -22,7 +22,7 @@ resource "helm_release" "cluster_dagster" {
   create_namespace = false
   values = [
     # "${file("./opt/values.yaml")}"
-    templatefile("${path.module}/opt/values-template.yaml", {
+    templatefile("./opt/values.yaml", {
       repository = var.repository
     })
   ]

@@ -4,6 +4,7 @@ type (
 	CreateDagsterClusterInput struct {
 		ClusterName   string
 		AdditionalSet []AdditionalSet
+		repository    string
 	}
 
 	AdditionalSet struct {
