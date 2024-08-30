@@ -6,16 +6,10 @@ dagster-user-deployments:
         repository: ${repository}
         tag: "latest"
         pullPolicy: Always
+      dagsterApiGrpcArgs:
+        - "--python-module"
+        - "test_project.dagster.test_project.test_project"
       port: 3030
-      resources:
-        limits:
-          cpu: 100m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 256Mi
-      includeConfigInLaunchedRuns:
-        enabled: true
 
 dagsterWebserver:
   pathPrefix: "/dagster"

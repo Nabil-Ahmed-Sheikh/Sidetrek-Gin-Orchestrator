@@ -7,7 +7,8 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-func CreateDagsterClusterWorkflow(ctx workflow.Context, input CreateDagsterClusterInput) error {
+func CreateDagsterDeploymentWorkflow(ctx workflow.Context, input CreateDagsterClusterInput) error {
+
 	ctx = workflow.WithActivityOptions(ctx, workflow.ActivityOptions{
 		StartToCloseTimeout: time.Hour,
 		HeartbeatTimeout:    time.Minute,

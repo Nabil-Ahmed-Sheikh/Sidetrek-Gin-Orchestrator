@@ -10,4 +10,5 @@ variable "additional_set" {
 
 variable "repository" {
     type = string
+    description = "Repository url"
 }

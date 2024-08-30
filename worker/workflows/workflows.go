@@ -47,7 +47,7 @@ func Register(w worker.Worker) {
 	w.RegisterWorkflow(network.DestroyVpcWorkflow)
 
 	// dagster
-	w.RegisterWorkflow(dagster.CreateDagsterClusterWorkflow)
+	w.RegisterWorkflow(dagster.CreateDagsterDeploymentWorkflow)
 	w.RegisterWorkflow(dagster.DestroyDagsterClusterWorkflow)
 
 	// Namespace
@@ -90,11 +90,11 @@ func MapInputToWorkflow(wfname string, input string) (interface{}, error) {
 		in := ec2.DestroyEc2Output{}
 		err := json.Unmarshal([]byte(input), &in)
 		return in, err
-	case "CreateDagsterClusterWorkflow":
+	case "CreateDagsterDeploymentWorkflow":
 		in := dagster.CreateDagsterClusterInput{}
 		err := json.Unmarshal([]byte(input), &in)
 		return in, err
-	case "DestroyDagsterClusterWorkflow":
+	case "DestroyDagsterDeploymentWorkflow":
 		in := dagster.DestroyDagsterClusterInput{}
 		err := json.Unmarshal([]byte(input), &in)
 		return in, err

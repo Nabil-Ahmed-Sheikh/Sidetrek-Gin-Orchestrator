@@ -24,8 +24,7 @@ resource "kubernetes_manifest" "emissary_mapping" {
       namespace = "emissary"
     }
     spec = {
-      prefix    = "/dagster"
-      rewrite   = ""
+      prefix    = "/"
       service   = "${var.svc_name}.${var.namespace_name}"
       host      = "${var.host_name}"
       tls       = true

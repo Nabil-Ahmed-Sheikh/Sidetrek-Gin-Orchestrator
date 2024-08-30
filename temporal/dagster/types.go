@@ -3,8 +3,8 @@ package dagster
 type (
 	CreateDagsterClusterInput struct {
 		ClusterName   string
+		Repository    string
 		AdditionalSet []AdditionalSet
-		repository    string
 	}
 
 	AdditionalSet struct {
